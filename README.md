@@ -1,6 +1,28 @@
 # FestPass: campus event registration + Jenkins
 
-This is a deliberately failing **diagnostic starter**, not a finished submission. It manages
+## Submission status
+
+Student: Aaditya Upadhyay (reg no 00457) | class code 001 | challenge code 00457
+
+Jenkins job `festpass-ci` ran against this repository on the `student-laptop` agent, polling Git once a minute.
+
+| Build | Commit | Cause | Result |
+|---|---|---|---|
+| 1 | `bf2f7c5` Configure my Jenkins assignment | Started by user (single bootstrap run) | FAILURE, 3 of 28 tests failed |
+| 2 | `d06d957` Personalize my help introduction | Started by an SCM change | FAILURE, 3 of 28 tests failed |
+| 3 | `9547d0f` Free the seat when a booking is cancelled | Started by an SCM change | SUCCESS, 28 tests, 0 failures |
+
+**Cause of the failures:** `BookingService.cancel()` confirmed the booking existed but never removed the student, so the seat stayed taken. One line fixes it: `event.students.remove(studentId);`. Tests, build helpers and pipeline stages are unchanged; the only Jenkinsfile edit is the `pollSCM('* * * * *')` trigger.
+
+Where to look:
+
+- `EVIDENCE.md`: short evidence page (build numbers, commits, causes, failing assertion, skipped stages, JAR output)
+- `evidence/build-1-red`, `build-2-red`, `build-3-green`: the `submission-evidence.csv` from each build
+- `jar-download/`: `festpass.jar` from build 3 with its `build-info.txt`, `smoke-test.txt` and `help-output.txt`
+
+Run the final JAR: `java -jar jar-download/festpass.jar help` (JDK 21 recommended).
+
+The starter shipped as a deliberately failing **diagnostic**; this repository now holds the repaired version submitted for the assignment (status below). It manages
 multiple events, seat limits, student registrations, cancellations, and local
 file persistence. For the **one-hour Jenkins assessment**, create the SCM job,
 add the missing polling trigger, investigate test failures, and demonstrate
